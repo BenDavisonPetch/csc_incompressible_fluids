@@ -24,3 +24,5 @@ IF(CMAKE_BUILD_TYPE MATCHES "Release")
 ENDIF()
 
 ADD_EXECUTABLE(test_point_01 tests/point_01.cc)
+ADD_EXECUTABLE(test_helpers_01 tests/test_helpers_01.cc)
+ADD_EXECUTABLE(test_geometry_01 tests/geometry_01.cc)
