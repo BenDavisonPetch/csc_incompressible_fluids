@@ -14,7 +14,7 @@ template <int dim, typename Number = double> class Point;
 namespace internal
 {
 template <int spacedim>
-using PointList = typename std::vector<Point<spacedim>>;
+using PointList = typename std::vector<Point<spacedim> >;
 
 template <int spacedim>
 using PointIterator = typename PointList<spacedim>::iterator;
@@ -33,13 +33,13 @@ template <int dim, typename Number> class Point
     Number &operator() (std::size_t idx);
     Number  operator() (std::size_t idx) const;
 
-    Point<dim, Number> operator+ (const Point<dim, Number> &p);
-    Point<dim, Number> operator- (const Point<dim, Number> &p);
-    Point<dim, Number> operator* (const Number &a);
-    Point<dim, Number> operator/ (const Number &a);
+    Point<dim, Number> operator+ (const Point<dim, Number> &p) const;
+    Point<dim, Number> operator- (const Point<dim, Number> &p) const;
+    Point<dim, Number> operator* (const Number &a) const;
+    Point<dim, Number> operator/ (const Number &a) const;
 
-    Number distance_squared (const Point<dim, Number> &p);
-    Number distance (const Point<dim, Number> &p);
+    Number distance_squared (const Point<dim, Number> &p) const;
+    Number distance (const Point<dim, Number> &p) const;
 
   private:
     std::vector<Number> values;
@@ -106,7 +106,7 @@ inline Number Point<dim, Number>::operator() (std::size_t idx) const
 
 template <int dim, typename Number>
 inline Point<dim, Number>
-Point<dim, Number>::operator+ (const Point<dim, Number> &p)
+Point<dim, Number>::operator+ (const Point<dim, Number> &p) const
 {
     Point<dim, Number> new_p;
     for (unsigned int i = 0; i < dim; i++)
@@ -118,7 +118,7 @@ Point<dim, Number>::operator+ (const Point<dim, Number> &p)
 
 template <int dim, typename Number>
 inline Point<dim, Number>
-Point<dim, Number>::operator- (const Point<dim, Number> &p)
+Point<dim, Number>::operator- (const Point<dim, Number> &p) const
 {
     Point<dim, Number> new_p;
     for (unsigned int i = 0; i < dim; i++)
@@ -129,7 +129,7 @@ Point<dim, Number>::operator- (const Point<dim, Number> &p)
 }
 
 template <int dim, typename Number>
-inline Point<dim, Number> Point<dim, Number>::operator* (const Number &a)
+inline Point<dim, Number> Point<dim, Number>::operator* (const Number &a) const
 {
     Point<dim, Number> new_p;
     for (unsigned int i = 0; i < dim; i++)
@@ -140,7 +140,7 @@ inline Point<dim, Number> Point<dim, Number>::operator* (const Number &a)
 }
 
 template <int dim, typename Number>
-inline Point<dim, Number> Point<dim, Number>::operator/ (const Number &a)
+inline Point<dim, Number> Point<dim, Number>::operator/ (const Number &a) const
 {
     Point<dim, Number> new_p;
     for (unsigned int i = 0; i < dim; i++)
@@ -152,7 +152,7 @@ inline Point<dim, Number> Point<dim, Number>::operator/ (const Number &a)
 
 template <int dim, typename Number>
 inline Number
-Point<dim, Number>::distance_squared (const Point<dim, Number> &p)
+Point<dim, Number>::distance_squared (const Point<dim, Number> &p) const
 {
     Number sum = 0;
     for (unsigned int i = 0; i < dim; i++)
@@ -163,7 +163,7 @@ Point<dim, Number>::distance_squared (const Point<dim, Number> &p)
 }
 
 template <int dim, typename Number>
-inline Number Point<dim, Number>::distance (const Point<dim, Number> &p)
+inline Number Point<dim, Number>::distance (const Point<dim, Number> &p) const
 {
     return std::sqrt (distance_squared (p));
 }
