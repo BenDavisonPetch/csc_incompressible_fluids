@@ -20,6 +20,18 @@ template <int spacedim>
 using PointIterator = typename PointList<spacedim>::iterator;
 }
 
+// Declarations
+template <int dim, typename Number, typename OtherNumber>
+Point<dim, Number> operator+(Point<dim, Number> lhs, const Point<dim, OtherNumber>& rhs);
+template <int dim, typename Number, typename OtherNumber>
+Point<dim, Number> operator-(Point<dim, Number> lhs, const Point<dim, OtherNumber>& rhs);
+template <int dim, typename Number, typename OtherNumber>
+Point<dim, Number> operator*(Point<dim, Number> lhs, const OtherNumber& rhs);
+template <int dim, typename Number, typename OtherNumber>
+Point<dim, Number> operator*(OtherNumber lhs, Point<dim, Number> rhs);
+template <int dim, typename Number, typename OtherNumber>
+Point<dim, Number> operator/(Point<dim, Number> lhs, const OtherNumber& rhs);
+
 template <int dim, typename Number> class Point
 {
   public:
@@ -33,10 +45,10 @@ template <int dim, typename Number> class Point
     Number &operator() (std::size_t idx);
     Number  operator() (std::size_t idx) const;
 
-    Point<dim, Number> operator+ (const Point<dim, Number> &p) const;
-    Point<dim, Number> operator- (const Point<dim, Number> &p) const;
-    Point<dim, Number> operator* (const Number &a) const;
-    Point<dim, Number> operator/ (const Number &a) const;
+    Point<dim, Number>& operator+= (const Point<dim, Number> &rhs);
+    Point<dim, Number>& operator-= (const Point<dim, Number> &rhs);
+    Point<dim, Number>& operator*= (const Number &rhs);
+    Point<dim, Number>& operator/= (const Number &rhs);
 
     Number distance_squared (const Point<dim, Number> &p) const;
     Number distance (const Point<dim, Number> &p) const;
@@ -105,49 +117,45 @@ inline Number Point<dim, Number>::operator() (std::size_t idx) const
 }
 
 template <int dim, typename Number>
-inline Point<dim, Number>
-Point<dim, Number>::operator+ (const Point<dim, Number> &p) const
+inline Point<dim, Number>&
+Point<dim, Number>::operator+= (const Point<dim, Number> &p)
 {
-    Point<dim, Number> new_p;
     for (unsigned int i = 0; i < dim; i++)
     {
-        new_p (i) = p (i) + values[i];
+        values[i] += p(i);
     }
-    return new_p;
+    return *this;
 }
 
 template <int dim, typename Number>
-inline Point<dim, Number>
-Point<dim, Number>::operator- (const Point<dim, Number> &p) const
+inline Point<dim, Number>&
+Point<dim, Number>::operator-= (const Point<dim, Number> &p)
 {
-    Point<dim, Number> new_p;
     for (unsigned int i = 0; i < dim; i++)
     {
-        new_p (i) = values[i] - p (i);
+        values[i] -= p(i);
     }
-    return new_p;
+    return *this;
 }
 
 template <int dim, typename Number>
-inline Point<dim, Number> Point<dim, Number>::operator* (const Number &a) const
+inline Point<dim, Number>& Point<dim, Number>::operator*= (const Number &a)
 {
-    Point<dim, Number> new_p;
     for (unsigned int i = 0; i < dim; i++)
     {
-        new_p (i) = values[i] * a;
+        values[i] *= a;
     }
-    return new_p;
+    return *this;
 }
 
 template <int dim, typename Number>
-inline Point<dim, Number> Point<dim, Number>::operator/ (const Number &a) const
+inline Point<dim, Number>& Point<dim, Number>::operator/= (const Number &a)
 {
-    Point<dim, Number> new_p;
     for (unsigned int i = 0; i < dim; i++)
     {
-        new_p (i) = values[i] / a;
+        values[i] /= a;
     }
-    return new_p;
+    return *this;
 }
 
 template <int dim, typename Number>
@@ -166,6 +174,41 @@ template <int dim, typename Number>
 inline Number Point<dim, Number>::distance (const Point<dim, Number> &p) const
 {
     return std::sqrt (distance_squared (p));
+}
+
+template <int dim, typename Number, typename OtherNumber>
+Point<dim, Number> operator+(Point<dim, Number> lhs, const Point<dim, OtherNumber>& rhs)
+{
+    lhs += rhs;
+    return lhs;
+}
+
+template <int dim, typename Number, typename OtherNumber>
+Point<dim, Number> operator-(Point<dim, Number> lhs, const Point<dim, OtherNumber>& rhs)
+{
+    lhs -= rhs;
+    return lhs;
+}
+
+template <int dim, typename Number, typename OtherNumber>
+Point<dim, Number> operator*(Point<dim, Number> lhs, const OtherNumber& rhs)
+{
+    lhs *= rhs;
+    return lhs;
+}
+
+template <int dim, typename Number, typename OtherNumber>
+Point<dim, Number> operator*(OtherNumber lhs, Point<dim, Number> rhs)
+{
+    rhs *= lhs;
+    return rhs;
+}
+
+template <int dim, typename Number, typename OtherNumber>
+Point<dim, Number> operator/(Point<dim, Number> lhs, const OtherNumber& rhs)
+{
+    lhs /= rhs;
+    return lhs;
 }
 
 } // namespace FVMCode

@@ -1,6 +1,8 @@
 #include <cmath>
 #include <iostream>
 
+#include "test_helpers.h"
+
 #include <FVMCode/point.h>
 
 void test ()
@@ -35,17 +37,39 @@ void test ()
                 < 1e-12,
             "Test failed");
     }
+
+    {
+        const Point<3> p1 (0, 1, 3);
+        const Point<3> p2 (1, 4, 2);
+
+        const Point<3> p3 = (p1 + p2) * 2;
+        const Point<3> p4 (2, 10, 10);
+        AssertTest (close (p3.distance (p4), 0));
+
+        const Point<3> p5 = 3 * (p1 - p2); // 3 * (-1, -3, 1) = (-3, -9, 3)
+        Point<3> p6(-3, -9, 3);
+        AssertTest(close(p5.distance(p6),0));
+    }
+
+    {
+        Point<2> p(1., 3.);
+        p /= 2; // 0.5, 1.5
+        AssertTest(close(p.distance(Point<2>(0.5, 1.5)), 0));
+        const Point<2> p2(1.5, 2.5);
+        p += Point<2>(1, 1); // 1.5, 2.5
+        AssertTest(close(p.distance(p2), 0));
+
+        p -= Point<2>(2, 2); // (-0.5, 0.5)
+        p *= 3; // (-1.5, 1.5)
+        AssertTest(close(p.distance(Point<2>(-1.5, 1.5)), 0));
+
+    }
 }
 
 int main ()
 {
     test ();
-#ifndef DEBUG
-    std::cout << "WARNING: Debug is not enabled, so Asserts are not active!"
-              << std::endl;
-#else
-    std::cout << "Success!" << std::endl;
-#endif
+    MAIN_OUTPUT;
 
     return EXIT_SUCCESS;
 }
