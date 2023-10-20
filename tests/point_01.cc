@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 
-#include <FVMCode/geometry.h>
+#include <FVMCode/point.h>
 
 void test()
 {
@@ -30,7 +30,11 @@ void test()
 int main()
 {
     test();
+#ifndef DEBUG
+    std::cout << "WARNING: Debug is not enabled, so Asserts are not active!" << std::endl;
+#else
     std::cout << "Success!" << std::endl;
+#endif
 
     return EXIT_SUCCESS;
 }

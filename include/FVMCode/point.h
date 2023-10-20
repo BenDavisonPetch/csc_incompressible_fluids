@@ -1,5 +1,5 @@
-#ifndef GEOMETRY_H
-#define GEOMETRY_H
+#ifndef POINT_H
+#define POINT_H
 
 #include <cmath>
 #include <vector>
