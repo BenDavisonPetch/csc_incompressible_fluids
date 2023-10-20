@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <sstream>
 
 #include "test_helpers.h"
 
@@ -62,7 +63,13 @@ void test ()
         p -= Point<2>(2, 2); // (-0.5, 0.5)
         p *= 3; // (-1.5, 1.5)
         AssertTest(close(p.distance(Point<2>(-1.5, 1.5)), 0));
+    }
 
+    {
+        const Point<3, int> p(1, 2, 3);
+        std::stringstream ss;
+        ss << p;
+        AssertTest(ss.str() == "(1, 2, 3)");
     }
 }
 

@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <vector>
+#include <iostream>
 
 #include "exceptions.h"
 
@@ -31,6 +32,8 @@ template <int dim, typename Number, typename OtherNumber>
 Point<dim, Number> operator*(OtherNumber lhs, Point<dim, Number> rhs);
 template <int dim, typename Number, typename OtherNumber>
 Point<dim, Number> operator/(Point<dim, Number> lhs, const OtherNumber& rhs);
+template <int dim, typename Number>
+std::ostream& operator<<(std::ostream& os, const Point<dim,Number> &p);
 
 template <int dim, typename Number> class Point
 {
@@ -209,6 +212,21 @@ Point<dim, Number> operator/(Point<dim, Number> lhs, const OtherNumber& rhs)
 {
     lhs /= rhs;
     return lhs;
+}
+
+template <int dim, typename Number>
+std::ostream& operator<<(std::ostream& os, const Point<dim,Number> &p)
+{
+    os << "(";
+    for (unsigned int i = 0; i < dim; i++)
+    {
+        os << p(i);
+        if (i < dim-1) {
+            os << ", ";
+        }
+    }
+    os << ")";
+    return os;
 }
 
 } // namespace FVMCode
