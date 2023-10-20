@@ -16,7 +16,7 @@
 
 #define AssertIndexRange(index, range)                                        \
     {                                                                         \
-        Assert (index < range, "Index out of range!");          \
+        Assert (index < range, "Index out of range!");                        \
     }
 
 #endif

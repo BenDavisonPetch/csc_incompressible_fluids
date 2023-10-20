@@ -100,7 +100,7 @@ Point<dim, Number>::operator+ (const Point<dim, Number> &p)
     Point<dim, Number> new_p;
     for (unsigned int i = 0; i < dim; i++)
     {
-        new_p (i) = p(i) + values[i];
+        new_p (i) = p (i) + values[i];
     }
     return new_p;
 }
@@ -112,7 +112,7 @@ Point<dim, Number>::operator- (const Point<dim, Number> &p)
     Point<dim, Number> new_p;
     for (unsigned int i = 0; i < dim; i++)
     {
-        new_p (i) = values[i] - p(i);
+        new_p (i) = values[i] - p (i);
     }
     return new_p;
 }
@@ -146,7 +146,7 @@ Point<dim, Number>::distance_squared (const Point<dim, Number> &p)
     Number sum = 0;
     for (unsigned int i = 0; i < dim; i++)
     {
-        sum += std::pow (p(i) - values[i], 2);
+        sum += std::pow (p (i) - values[i], 2);
     }
     return sum;
 }
@@ -158,6 +158,5 @@ inline Number Point<dim, Number>::distance (const Point<dim, Number> &p)
 }
 
 } // namespace FVMCode
-
 
 #endif
