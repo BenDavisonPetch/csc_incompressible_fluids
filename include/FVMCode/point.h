@@ -9,7 +9,18 @@
 namespace FVMCode
 {
 
-template <int dim, typename Number = double> class Point
+template <int dim, typename Number = double> class Point;
+
+namespace internal
+{
+template <int spacedim>
+using PointList = typename std::vector<Point<spacedim>>;
+
+template <int spacedim>
+using PointIterator = typename PointList<spacedim>::iterator;
+}
+
+template <int dim, typename Number> class Point
 {
   public:
     // Creates a point with Number's default constructor
