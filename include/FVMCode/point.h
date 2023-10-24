@@ -35,15 +35,9 @@ Point<dim, Number> operator/(Point<dim, Number> lhs, const OtherNumber& rhs);
 template <int dim, typename Number>
 std::ostream& operator<<(std::ostream& os, const Point<dim,Number> &p);
 
-template <typename Number>
-inline Point<3, Number> cross_p(const Point<3, Number> &p1, const Point<3, Number> &p2)
-{
-    Point<3, Number> result;
-    result(0) = p1(1) * p2(2) - p1(2) * p2(1);
-    result(1) = p1(2) * p2(0) - p1(0) * p2(2);
-    result(2) = p1(0) * p2(1) - p1(1) * p2(0);
-    return result;
-}
+// This has to be templated with dim to compile but is only implemented for dim == 3
+template <int dim, typename Number>
+inline Point<3, Number> cross_p(const Point<dim, Number> &p1, const Point<dim, Number> &p2);
 
 template <int dim, typename Number> class Point
 {
@@ -237,6 +231,17 @@ std::ostream& operator<<(std::ostream& os, const Point<dim,Number> &p)
     }
     os << ")";
     return os;
+}
+
+template <int dim, typename Number>
+inline Point<3, Number> cross_p(const Point<dim, Number> &p1, const Point<dim, Number> &p2)
+{
+    Assert(dim == 3, "Cross product not defined for dim != 3");
+    Point<3, Number> result;
+    result(0) = p1(1) * p2(2) - p1(2) * p2(1);
+    result(1) = p1(2) * p2(0) - p1(0) * p2(2);
+    result(2) = p1(0) * p2(1) - p1(1) * p2(0);
+    return result;
 }
 
 } // namespace FVMCode

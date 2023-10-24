@@ -86,12 +86,7 @@ double triangle_area (const Point<spacedim> &p1, const Point<spacedim> &p2,
 
     if (spacedim == 3)
     {
-        Point<3> cross_product;
-        cross_product (0) = edge1 (1) * edge2 (2) - edge1 (2) * edge2 (1);
-        cross_product (1) = edge1 (2) * edge2 (0) - edge1 (0) * edge2 (2);
-        cross_product (2) = edge1 (0) * edge2 (1) - edge1 (1) * edge2 (0);
-
-        return 0.5 * cross_product.distance (Point<3> (0, 0, 0));
+        return 0.5 * cross_p (edge1, edge2).distance (Point<3> (0, 0, 0));
     }
     else if (spacedim == 2)
     {
