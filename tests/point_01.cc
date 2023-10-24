@@ -71,6 +71,24 @@ void test ()
         ss << p;
         AssertTest(ss.str() == "(1, 2, 3)");
     }
+
+    {
+        const Point<3, int> p1(1,0,0);
+        const Point<3, int> p2(0,1,0);
+        const auto p3 = cross_p(p1,p2);
+        AssertTest(p3(0) == 0);
+        AssertTest(p3(1) == 0);
+        AssertTest(p3(2) == 1);
+
+        const auto p4 = cross_p(p2,p1);
+        AssertTest(p4(0) == 0);
+        AssertTest(p4(1) == 0);
+        AssertTest(p4(2) == -1);
+
+        const auto p5 = cross_p(Point<3>(1,2,3), Point<3>(5,-2,3));
+        const Point<3> result(12, 12, -12);
+        AssertTest(close(result.distance(p5), 0));
+    }
 }
 
 int main ()
