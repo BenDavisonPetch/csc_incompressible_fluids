@@ -61,6 +61,7 @@ template <int dim, typename Number> class Point
     Number distance (const Point<dim, Number> &p) const;
     Number norm() const;
     Number norm_squared() const;
+    Number dot (const Point<dim, Number> &p) const;
 
   private:
     std::vector<Number> values;
@@ -198,6 +199,17 @@ inline Number Point<dim, Number>::norm_squared () const
     for (unsigned int i = 0; i < dim; i++)
     {
         sum += std::pow (values[i], 2);
+    }
+    return sum;
+}
+
+template <int dim, typename Number>
+inline Number Point<dim, Number>::dot (const Point<dim, Number> &p) const
+{
+    Number sum = 0;
+    for (unsigned int i = 0; i < dim; i++)
+    {
+        sum += values[i] * p(i);
     }
     return sum;
 }
