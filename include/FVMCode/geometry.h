@@ -1,6 +1,7 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
+#include <array>
 #include "point.h"
 
 namespace FVMCode
@@ -24,6 +25,8 @@ double compute_planar_area_and_centroid (
 template <int spacedim>
 double triangle_area (const Point<spacedim> &p1, const Point<spacedim> &p2,
                       const Point<spacedim> &p3);
+
+double tetrahedron_volume(const std::array<Point<3>, 4> &vertices);
 
 // =============================
 // Implementation
