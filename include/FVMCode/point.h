@@ -59,6 +59,8 @@ template <int dim, typename Number> class Point
 
     Number distance_squared (const Point<dim, Number> &p) const;
     Number distance (const Point<dim, Number> &p) const;
+    Number norm() const;
+    Number norm_squared() const;
 
   private:
     std::vector<Number> values;
@@ -181,6 +183,23 @@ template <int dim, typename Number>
 inline Number Point<dim, Number>::distance (const Point<dim, Number> &p) const
 {
     return std::sqrt (distance_squared (p));
+}
+
+template <int dim, typename Number>
+inline Number Point<dim, Number>::norm () const
+{
+    return std::sqrt (norm_squared());
+}
+
+template <int dim, typename Number>
+inline Number Point<dim, Number>::norm_squared () const
+{
+    Number sum = 0;
+    for (unsigned int i = 0; i < dim; i++)
+    {
+        sum += std::pow (values[i], 2);
+    }
+    return sum;
 }
 
 template <int dim, typename Number, typename OtherNumber>
