@@ -57,9 +57,7 @@ template <int dim, int spacedim> class Face
      * is always the cell that owns the face (i.e. the cell for which the
      * normal faces outwards).
      */
-    const std::vector<CellIterator> &neighbours () const;
-
-    void assign_neighbours (const std::vector<CellIterator> &neighbours);
+    const std::vector<unsigned int> &neighbour_indices () const;
 
     // TODO: replace return types of below with generalised tensor class
     Point<spacedim>        normal () const;
@@ -74,7 +72,7 @@ template <int dim, int spacedim> class Face
 
   private:
     std::vector<PointIterator> vertex_list;
-    std::vector<CellIterator>  neighbour_list;
+    std::vector<unsigned int>  neighbour_list;
     // TODO: replace with generalised tensor class
     Point<spacedim> area_vec;
     Point<spacedim> centroid;
@@ -100,7 +98,7 @@ template <int dim, int spacedim> class Cell
     /**
      * Returns a container of the cell's neighbours.
      */
-    const std::vector<CellIterator> &neighbours () const;
+    const std::vector<unsigned int> &neighbour_indices () const;
 
     double                 volume () const { return volume_; }
     const Point<spacedim> &center () const { return centroid; }
@@ -112,7 +110,7 @@ template <int dim, int spacedim> class Cell
     void                       compute_volume_and_centroid ();
 
     std::vector<FaceIterator> face_list;
-    std::vector<CellIterator> neighbour_list;
+    std::vector<unsigned int> neighbour_list;
     Point<spacedim>           centroid;
     double                    volume_;
 };
@@ -188,17 +186,10 @@ Face<dim, spacedim>::vertices () const
 }
 
 template <int dim, int spacedim>
-inline const std::vector<typename Face<dim, spacedim>::CellIterator> &
-Face<dim, spacedim>::neighbours () const
+inline const std::vector<unsigned int> &
+Face<dim, spacedim>::neighbour_indices () const
 {
     return neighbour_list;
-}
-
-template <int dim, int spacedim>
-void Face<dim, spacedim>::assign_neighbours (
-    const std::vector<CellIterator> &neighbours)
-{
-    neighbour_list = neighbours;
 }
 
 template <int dim, int spacedim>
@@ -251,8 +242,8 @@ Cell<dim, spacedim>::faces () const
 }
 
 template <int dim, int spacedim>
-inline const std::vector<typename Cell<dim, spacedim>::CellIterator> &
-Cell<dim, spacedim>::neighbours () const
+inline const std::vector<unsigned int> &
+Cell<dim, spacedim>::neighbour_indices () const
 {
     return neighbour_list;
 }

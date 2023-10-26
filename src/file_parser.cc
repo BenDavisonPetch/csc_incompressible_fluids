@@ -19,7 +19,7 @@ UnstructuredMeshParser::UnstructuredMeshParser (
     parse_boundaries ();
 
     fix_normals ();
-    determine_cell_neighbours();
+    determine_cell_neighbours ();
 }
 
 void UnstructuredMeshParser::parse_points ()
@@ -27,7 +27,7 @@ void UnstructuredMeshParser::parse_points ()
     std::ifstream file (points_file);
     unsigned int  n_points;
     file >> n_points;
-    Assert(n_points, "Must have at least one point");
+    Assert (n_points, "Must have at least one point");
 
     mesh.point_list.resize (n_points);
 
@@ -51,7 +51,7 @@ void UnstructuredMeshParser::parse_faces ()
     std::ifstream file (faces_file);
     unsigned int  n_faces;
     file >> n_faces;
-    Assert(n_faces, "Must have at least one face");
+    Assert (n_faces, "Must have at least one face");
 
     // Read first open parenthesis
     char temp;
@@ -83,7 +83,7 @@ void UnstructuredMeshParser::parse_faces ()
 
         // Reading in of face has been successful so we can construct the Face
         // object and give it to the mesh
-        mesh.face_list.push_back(Face<3> (vertices));
+        mesh.face_list.push_back (Face<3> (vertices));
     }
 }
 
@@ -92,7 +92,7 @@ void UnstructuredMeshParser::parse_cells ()
     std::ifstream file (cells_file);
     unsigned int  n_cells;
     file >> n_cells;
-    Assert(n_cells, "Must have at least one cell");
+    Assert (n_cells, "Must have at least one cell");
 
     // Read first open parenthesis
     char temp;
@@ -124,14 +124,15 @@ void UnstructuredMeshParser::parse_cells ()
 
         // Reading in of cell has been successful so we can construct the Cell
         // object and give it to the mesh
-        Cell<3> cell(faces);
-        mesh.cell_list.push_back(cell);
+        Cell<3> cell (faces);
+        mesh.cell_list.push_back (cell);
 
         // Now we add the cell to the neighbour list of each face in its list
-        // The order of owner and neighbour will be fixed later on by fix_normals()
+        // The order of owner and neighbour will be fixed later on by
+        // fix_normals()
         for (UnstructuredMesh::FaceIterator face : faces)
         {
-            face->neighbour_list.push_back(mesh.get_cell(n));
+            face->neighbour_list.push_back (n);
         }
     }
 }
@@ -141,7 +142,7 @@ void UnstructuredMeshParser::parse_boundaries ()
     std::ifstream file (boundary_file);
     unsigned int  n_boundary_types;
     file >> n_boundary_types;
-    Assert(n_boundary_types, "Must have at least one boundary type");
+    Assert (n_boundary_types, "Must have at least one boundary type");
 
     // Read first open parenthesis
     char temp;
@@ -151,7 +152,7 @@ void UnstructuredMeshParser::parse_boundaries ()
     {
         std::string boundary_name;
         file >> boundary_name;
-        mesh.boundary_names.push_back(boundary_name);
+        mesh.boundary_names.push_back (boundary_name);
 
         unsigned int n_faces;
         file >> n_faces;
@@ -163,7 +164,7 @@ void UnstructuredMeshParser::parse_boundaries ()
         {
             unsigned int f_index;
             file >> f_index;
-            Assert(f_index < mesh.n_faces(), "Face index too high");
+            Assert (f_index < mesh.n_faces (), "Face index too high");
             mesh.face_list[f_index].is_boundary_ = true;
             mesh.face_list[f_index].boundary_id_ = b;
         }
@@ -174,34 +175,46 @@ void UnstructuredMeshParser::parse_boundaries ()
     }
 }
 
-void UnstructuredMeshParser::fix_normals()
+void UnstructuredMeshParser::fix_normals ()
 {
-    for (Face<3>& face : mesh.faces())
+    for (Face<3> &face : mesh.faces ())
     {
-        Assert(face.neighbour_list.size() == 1 || face.neighbour_list.size() == 2, "A face should only have one or two neighbouring cells");
-        if (face.neighbour_list.size() == 1) Assert(face.is_boundary_, "Face has only one neighbour but is not marked as a boundary");
-        
+        Assert (face.neighbour_list.size () == 1
+                    || face.neighbour_list.size () == 2,
+                "A face should only have one or two neighbouring cells");
+        if (face.neighbour_list.size () == 1)
+            Assert (
+                face.is_boundary_,
+                "Face has only one neighbour but is not marked as a boundary");
+
         // flip normal vector if required
-        std::cout << face.area_vector() << std::endl;;
-        std::cout << face.center() << std::endl;
-        std::cout << face.neighbour_list[0]->volume() << std::endl;
-        std::cout << face.neighbour_list[0]->center() << std::endl;
-        if (face.area_vector().dot(face.center() - face.neighbour_list[0]->center()) < 0)
+        if (face.area_vector ().dot (
+                face.center ()
+                - mesh.get_cell (face.neighbour_list[0])->center ())
+            < 0)
         {
             // normal vector is facing inwards, so we need to invert
+            std::cerr << "WARNING: parser detected normal facing towards "
+                         "owner cell centroid. Ensure vertices of faces are "
+                         "given in a right handed manner, and that the first "
+                         "cell that mentions a face's index is its owner."
+                      << std::endl;
             face.area_vec *= -1;
         }
     }
 }
 
-void UnstructuredMeshParser::determine_cell_neighbours()
+void UnstructuredMeshParser::determine_cell_neighbours ()
 {
-    for (const Face<3>& face : mesh.faces())
+    for (const Face<3> &face : mesh.faces ())
     {
-        if (face.is_boundary()) continue;
+        if (face.is_boundary ())
+            continue;
 
-        face.neighbours()[0]->neighbour_list.push_back(face.neighbours()[1]);
-        face.neighbours()[1]->neighbour_list.push_back(face.neighbours()[0]);
+        mesh.get_cell (face.neighbour_indices ()[0])
+            ->neighbour_list.push_back (face.neighbour_indices ()[1]);
+        mesh.get_cell (face.neighbour_indices ()[1])
+            ->neighbour_list.push_back (face.neighbour_indices ()[0]);
     }
 }
 
