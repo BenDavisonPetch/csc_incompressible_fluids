@@ -6,3 +6,4 @@ compile_commands.json*
 Makefile
 CMakeCache.txt
 cmake_install.cmake
+build
