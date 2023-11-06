@@ -174,8 +174,6 @@ void UnstructuredMeshParser::parse_boundaries_legacy (
             unsigned int f_index;
             file >> f_index;
             Assert (f_index < mesh.n_faces (), "Face index too high");
-            mesh.face_list[f_index].is_boundary_ = true;
-            mesh.face_list[f_index].boundary_id_ = b;
         }
 
         file >> closed_bracket;
@@ -320,9 +318,9 @@ void UnstructuredMeshParser::fix_normals ()
                     || face.neighbour_list.size () == 2,
                 "A face should only have one or two neighbouring cells");
         if (face.neighbour_list.size () == 1)
-            Assert (
-                face.is_boundary_,
-                "Face has only one neighbour but is not marked as a boundary");
+            // Assert (
+            //     face.is_boundary_,
+            //     "Face has only one neighbour but is not marked as a boundary");
 
         // flip normal vector if required
         if (face.area_vector ().dot (

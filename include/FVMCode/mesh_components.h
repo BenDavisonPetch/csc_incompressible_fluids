@@ -65,8 +65,7 @@ template <int dim, int spacedim> class Face
     Point<spacedim>        area_vector () const;
     const Point<spacedim> &center () const;
 
-    bool         is_boundary () const { return is_boundary_; }
-    unsigned int boundary_id () const;
+    bool         is_boundary () const { return neighbour_list.size() == 1; }
 
     friend UnstructuredMeshParser;
 
@@ -77,9 +76,6 @@ template <int dim, int spacedim> class Face
     Point<spacedim> area_vec;
     Point<spacedim> centroid;
     double          scalar_area;
-
-    bool is_boundary_;
-    int  boundary_id_;
 };
 
 template <int dim, int spacedim> class Cell
@@ -217,13 +213,6 @@ template <int dim, int spacedim>
 inline const Point<spacedim> &Face<dim, spacedim>::center () const
 {
     return centroid;
-}
-
-template <int dim, int spacedim>
-inline unsigned int Face<dim, spacedim>::boundary_id () const
-{
-    Assert (is_boundary_, "Trying to query boundary id of non-boundary cell");
-    return boundary_id_;
 }
 
 // Cell implementation
