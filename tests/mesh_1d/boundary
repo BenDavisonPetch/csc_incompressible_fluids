@@ -1,0 +1,26 @@
+3
+(
+    inlet
+    {
+        type            wall;
+        inGroups        1(wall);
+        nFaces          1;
+        startFace       19;
+    }
+    outlet
+    {
+        type            wall;
+        inGroups        1(wall);
+        nFaces          1;
+        startFace       20;
+    }
+    sides
+    {
+        type            empty;
+        inGroups        1(empty);
+        nFaces          80;
+        startFace       21;
+    }
+)
+
+// ************************************************************************* //

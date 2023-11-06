@@ -22,12 +22,15 @@ UnstructuredMeshParser::UnstructuredMeshParser (
     UnstructuredMesh &mesh, const std::string &points_file,
     const std::string &faces_file, const std::string &owner_file,
     const std::string &neighbour_file, const std::string &boundary_file)
-: mesh(mesh)
+    : mesh (mesh)
 {
-    
+    parse_points (points_file);
+    parse_faces (faces_file);
+    parse_owner_neighbour_list (owner_file, neighbour_file);
+    parse_boundaries_foam (boundary_file);
 }
 
-void UnstructuredMeshParser::parse_points (const std::string& points_file)
+void UnstructuredMeshParser::parse_points (const std::string &points_file)
 {
     std::ifstream file (points_file);
     unsigned int  n_points;
@@ -51,7 +54,7 @@ void UnstructuredMeshParser::parse_points (const std::string& points_file)
     }
 }
 
-void UnstructuredMeshParser::parse_faces (const std::string& faces_file)
+void UnstructuredMeshParser::parse_faces (const std::string &faces_file)
 {
     std::ifstream file (faces_file);
     unsigned int  n_faces;
@@ -92,7 +95,7 @@ void UnstructuredMeshParser::parse_faces (const std::string& faces_file)
     }
 }
 
-void UnstructuredMeshParser::parse_cells (const std::string& cells_file)
+void UnstructuredMeshParser::parse_cells (const std::string &cells_file)
 {
     std::ifstream file (cells_file);
     unsigned int  n_cells;
@@ -142,7 +145,8 @@ void UnstructuredMeshParser::parse_cells (const std::string& cells_file)
     }
 }
 
-void UnstructuredMeshParser::parse_boundaries_legacy (const std::string& boundary_file)
+void UnstructuredMeshParser::parse_boundaries_legacy (
+    const std::string &boundary_file)
 {
     std::ifstream file (boundary_file);
     unsigned int  n_boundary_types;
@@ -157,7 +161,7 @@ void UnstructuredMeshParser::parse_boundaries_legacy (const std::string& boundar
     {
         std::string boundary_name;
         file >> boundary_name;
-        mesh.boundary_names.push_back (boundary_name);
+        mesh.boundaries.push_back (BoundaryPatch (boundary_name, wall, 0, 0));
 
         unsigned int n_faces;
         file >> n_faces;
@@ -178,6 +182,134 @@ void UnstructuredMeshParser::parse_boundaries_legacy (const std::string& boundar
         Assert (open_bracket == '(', "Malformed boundary file");
         Assert (closed_bracket == ')', "Malformed boundary file");
     }
+}
+
+void UnstructuredMeshParser::parse_owner_neighbour_list (
+    const std::string &owner_file, const std::string &neighbour_file)
+{
+    _add_cells_to_faces_neighbours (owner_file);
+    _add_cells_to_faces_neighbours (neighbour_file);
+
+    // Now the faces all have indices in their neighbour lists, and we've
+    // populated the map from cell_index -> face_indices
+    // We can therefore construct the cells using the faces_of_cell map
+
+    for (const auto &[cell_index, face_indices] : faces_of_cell)
+    {
+        (void)cell_index;
+
+        std::vector<UnstructuredMesh::FaceIterator> faces (
+            face_indices.size ());
+
+        for (unsigned int f = 0; f < face_indices.size (); f++)
+        {
+            faces[f] = mesh.get_face (face_indices[f]);
+        }
+
+        // Note that because faces_of_cell is an ordered map, we expect the
+        // cell indices to be in the right order for us to do this:
+        Cell<3> cell (faces);
+        mesh.cell_list.push_back (cell);
+    }
+}
+
+// For each line in the owner/neighbour file, add the cell index to the
+// neighbour list of the corresponding face. Needs to be called in order using
+// parse_owner_neighbour_list.
+void UnstructuredMeshParser::_add_cells_to_faces_neighbours (
+    const std::string &label_list_file)
+{
+    std::ifstream file (label_list_file);
+
+    unsigned int n_entries;
+    file >> n_entries;
+
+    char temp;
+    file >> temp;
+
+    unsigned int cell_index;
+
+    for (unsigned int n = 0; n < n_entries; n++)
+    {
+        file >> cell_index;
+        mesh.get_face (n)->neighbour_list.push_back (cell_index);
+        faces_of_cell[cell_index].push_back (n);
+    }
+
+    char closed_bracket;
+    file >> closed_bracket;
+    Assert (closed_bracket == ')', "Malformed owner or neighbour file");
+}
+
+void UnstructuredMeshParser::parse_boundaries_foam (
+    const std::string &boundary_file)
+{
+    std::ifstream file (boundary_file);
+    unsigned int  n_patches;
+    file >> n_patches;
+
+    char open_bracket_round;
+    char closed_bracket_round;
+    file >> open_bracket_round;
+    Assert (open_bracket_round == '(', "Malformed boundary file");
+
+    for (unsigned int n = 0; n < n_patches; n++)
+    {
+        std::string name;
+        file >> name;
+
+        char curly;
+
+        file >> curly;
+        Assert (curly == '{', "Malformed boundary file");
+
+        // read in boundary patch details
+        std::string  field;
+        std::string  type;
+        unsigned int n_faces;
+        unsigned int start_face;
+        while (file >> field)
+        {
+            if (field == "}")
+                break;
+            if (field == "type")
+            {
+                file >> type;
+                // Remove semi-colon
+                type.pop_back ();
+            }
+            else if (field == "nFaces")
+            {
+                file >> n_faces;
+                char semicolon;
+                file >> semicolon;
+                Assert (semicolon == ';', "Malformed boundary file");
+            }
+            else if (field == "startFace")
+            {
+                file >> start_face;
+                char semicolon;
+                file >> semicolon;
+                Assert (semicolon == ';', "Malformed boundary file");
+            }
+            else
+            {
+                // ignore field
+                std::cout << "WARNING: ignoring field " << field << std::endl;
+                file >> field;
+            }
+        }
+        // std::cout << "About to add boundary patch..." << std::endl;
+        // std::cout << "\tName: " << name << std::endl;
+        // std::cout << "\tType: " << type << std::endl;
+        // std::cout << "\tn_faces: " << n_faces << std::endl;
+        // std::cout << "\tstart_face: " << start_face << std::endl;
+        mesh.boundaries.push_back (
+            BoundaryPatch (name, type, n_faces, start_face));
+    }
+
+    file >> closed_bracket_round;
+    Assert (closed_bracket_round == ')', "Malformed boundary file");
 }
 
 void UnstructuredMeshParser::fix_normals ()
