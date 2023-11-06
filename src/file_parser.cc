@@ -8,21 +8,26 @@ UnstructuredMeshParser::UnstructuredMeshParser (
     const std::string &faces_file, const std::string &cells_file,
     const std::string &boundary_file)
     : mesh (mesh)
-    , points_file (points_file)
-    , faces_file (faces_file)
-    , cells_file (cells_file)
-    , boundary_file (boundary_file)
 {
-    parse_points ();
-    parse_faces ();
-    parse_cells ();
-    parse_boundaries ();
+    parse_points (points_file);
+    parse_faces (faces_file);
+    parse_cells (cells_file);
+    parse_boundaries_legacy (boundary_file);
 
     fix_normals ();
     determine_cell_neighbours ();
 }
 
-void UnstructuredMeshParser::parse_points ()
+UnstructuredMeshParser::UnstructuredMeshParser (
+    UnstructuredMesh &mesh, const std::string &points_file,
+    const std::string &faces_file, const std::string &owner_file,
+    const std::string &neighbour_file, const std::string &boundary_file)
+: mesh(mesh)
+{
+    
+}
+
+void UnstructuredMeshParser::parse_points (const std::string& points_file)
 {
     std::ifstream file (points_file);
     unsigned int  n_points;
@@ -46,7 +51,7 @@ void UnstructuredMeshParser::parse_points ()
     }
 }
 
-void UnstructuredMeshParser::parse_faces ()
+void UnstructuredMeshParser::parse_faces (const std::string& faces_file)
 {
     std::ifstream file (faces_file);
     unsigned int  n_faces;
@@ -87,7 +92,7 @@ void UnstructuredMeshParser::parse_faces ()
     }
 }
 
-void UnstructuredMeshParser::parse_cells ()
+void UnstructuredMeshParser::parse_cells (const std::string& cells_file)
 {
     std::ifstream file (cells_file);
     unsigned int  n_cells;
@@ -137,7 +142,7 @@ void UnstructuredMeshParser::parse_cells ()
     }
 }
 
-void UnstructuredMeshParser::parse_boundaries ()
+void UnstructuredMeshParser::parse_boundaries_legacy (const std::string& boundary_file)
 {
     std::ifstream file (boundary_file);
     unsigned int  n_boundary_types;
