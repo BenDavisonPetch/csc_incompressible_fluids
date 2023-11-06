@@ -5,6 +5,8 @@
 
 void test ()
 {
+    // This test case is for a 1D mesh of 20 blocks, each with extent (0.005
+    // 0.1, 0.01), and stacked in the x direction
     using namespace FVMCode;
 
     UnstructuredMesh       mesh;
@@ -35,6 +37,24 @@ void test ()
     {
         AssertTest (close (cell.volume (), 0.005 * 0.1 * 0.01));
     }
+
+    for (const BoundaryPatch& boundary : mesh.get_patches())
+    {
+        for (unsigned int f = boundary.start_face; f < boundary.start_face + boundary.n_faces; f++)
+        {
+            const auto& face = mesh.get_face(f);
+            AssertTest(face->is_boundary());
+            AssertTest(face->interpolation_factor() == 1.);
+            AssertTest(close(face->delta(), 2. / 0.1) || close(face->delta(), 2. / 0.01));
+        }
+    }
+
+    for (const Face<3>& face : mesh.faces()) {
+        if (face.is_boundary()) continue;
+        AssertTest(close(face.delta(), 1. / 0.005));
+        AssertTest(close(face.interpolation_factor(), 0.5));
+    }
+    AssertTest(false);
 }
 
 int main ()

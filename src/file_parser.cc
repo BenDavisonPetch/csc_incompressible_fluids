@@ -16,6 +16,8 @@ UnstructuredMeshParser::UnstructuredMeshParser (
 
     fix_normals ();
     determine_cell_neighbours ();
+
+    compute_distance_ratios ();
 }
 
 UnstructuredMeshParser::UnstructuredMeshParser (
@@ -28,6 +30,8 @@ UnstructuredMeshParser::UnstructuredMeshParser (
     parse_faces (faces_file);
     parse_owner_neighbour_list (owner_file, neighbour_file);
     parse_boundaries_foam (boundary_file);
+
+    compute_distance_ratios ();
 }
 
 void UnstructuredMeshParser::parse_points (const std::string &points_file)
@@ -320,22 +324,24 @@ void UnstructuredMeshParser::fix_normals ()
         if (face.neighbour_list.size () == 1)
             // Assert (
             //     face.is_boundary_,
-            //     "Face has only one neighbour but is not marked as a boundary");
+            //     "Face has only one neighbour but is not marked as a
+            //     boundary");
 
-        // flip normal vector if required
-        if (face.area_vector ().dot (
-                face.center ()
-                - mesh.get_cell (face.neighbour_list[0])->center ())
-            < 0)
-        {
-            // normal vector is facing inwards, so we need to invert
-            std::cerr << "WARNING: parser detected normal facing towards "
-                         "owner cell centroid. Ensure vertices of faces are "
-                         "given in a right handed manner, and that the first "
-                         "cell that mentions a face's index is its owner."
-                      << std::endl;
-            face.area_vec *= -1;
-        }
+            // flip normal vector if required
+            if (face.area_vector ().dot (
+                    face.center ()
+                    - mesh.get_cell (face.neighbour_list[0])->center ())
+                < 0)
+            {
+                // normal vector is facing inwards, so we need to invert
+                std::cerr
+                    << "WARNING: parser detected normal facing towards "
+                       "owner cell centroid. Ensure vertices of faces are "
+                       "given in a right handed manner, and that the first "
+                       "cell that mentions a face's index is its owner."
+                    << std::endl;
+                face.area_vec *= -1;
+            }
     }
 }
 
@@ -350,6 +356,22 @@ void UnstructuredMeshParser::determine_cell_neighbours ()
             ->neighbour_list.push_back (face.neighbour_indices ()[1]);
         mesh.get_cell (face.neighbour_indices ()[1])
             ->neighbour_list.push_back (face.neighbour_indices ()[0]);
+    }
+}
+
+void UnstructuredMeshParser::compute_distance_ratios ()
+{
+    for (Face<3> &face : mesh.faces()) {
+        if(face.is_boundary())
+        {
+            face.interpolation_factor_ = 1.;
+            face.delta_ =  1. / face.center().distance(mesh.get_cell(face.neighbour_list[0])->center());
+        } else {
+            double cell_center_distance = mesh.get_cell(face.neighbour_list[0])->center().distance(mesh.get_cell(face.neighbour_list[1])->center());
+            double face_cell_distance = mesh.get_cell(face.neighbour_list[0])->center().distance(face.center());
+            face.delta_ = 1. / cell_center_distance;
+            face.interpolation_factor_ = face_cell_distance / cell_center_distance;
+        }
     }
 }
 

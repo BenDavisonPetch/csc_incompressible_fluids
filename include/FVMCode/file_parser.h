@@ -43,6 +43,8 @@ class UnstructuredMeshParser
     void fix_normals ();
     void determine_cell_neighbours ();
 
+    void compute_distance_ratios ();
+
     UnstructuredMesh &mesh;
 
     std::map<unsigned int, std::vector<unsigned int> > faces_of_cell;

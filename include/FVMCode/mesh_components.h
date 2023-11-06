@@ -65,7 +65,13 @@ template <int dim, int spacedim> class Face
     Point<spacedim>        area_vector () const;
     const Point<spacedim> &center () const;
 
-    bool         is_boundary () const { return neighbour_list.size() == 1; }
+    bool is_boundary () const { return neighbour_list.size () == 1; }
+
+    // One over the parent to neighbour centroid difference for internal cells,
+    // one over face-to-cell distance for boundary cells
+    double delta () const { return delta_; }
+    // Interpolation factor for determining quantities at the face.
+    double interpolation_factor () const { return interpolation_factor_; }
 
     friend UnstructuredMeshParser;
 
@@ -76,6 +82,9 @@ template <int dim, int spacedim> class Face
     Point<spacedim> area_vec;
     Point<spacedim> centroid;
     double          scalar_area;
+
+    double delta_;
+    double interpolation_factor_;
 };
 
 template <int dim, int spacedim> class Cell

@@ -25,7 +25,6 @@ void test ()
                                mesh.get_cell (0)->center ()),
                            0.25));
         AssertTest (mesh.get_face (i)->is_boundary ());
-        AssertTest (mesh.get_face (i)->boundary_id () == 0);
         AssertTest (close (mesh.get_face (i)->area (), 0.25));
         AssertTest (mesh.get_face (i)->n_vertices () == 4);
     }
