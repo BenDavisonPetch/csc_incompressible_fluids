@@ -45,7 +45,7 @@ class UnstructuredMeshParser
 
     UnstructuredMesh &mesh;
 
-    std::map<unsigned int, std::vector<unsigned int>> faces_of_cell;
+    std::map<unsigned int, std::vector<unsigned int> > faces_of_cell;
 };
 
 }

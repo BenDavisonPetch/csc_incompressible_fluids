@@ -31,8 +31,9 @@ void test ()
     AssertTest (mesh.get_patches ()[2].n_faces == 80);
     AssertTest (mesh.get_patches ()[2].start_face == 21);
 
-    for (const auto& cell : mesh.cells()) {
-        AssertTest(close(cell.volume(), 0.005*0.1*0.01));
+    for (const auto &cell : mesh.cells ())
+    {
+        AssertTest (close (cell.volume (), 0.005 * 0.1 * 0.01));
     }
 }
 

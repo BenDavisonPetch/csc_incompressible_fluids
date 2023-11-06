@@ -1,13 +1,13 @@
 #ifndef UNSTRUCTURED_MESH_H
 #define UNSTRUCTURED_MESH_H
 
-#include <vector>
 #include <iterator>
+#include <vector>
 
+#include "boundary_patch.h"
 #include "file_parser_forward.h"
 #include "mesh_components.h"
 #include "point.h"
-#include "boundary_patch.h"
 
 namespace FVMCode
 {
@@ -33,7 +33,7 @@ class UnstructuredMesh
     CellList &cells ();
     FaceList &faces ();
 
-    const std::vector<BoundaryPatch>& get_patches();
+    const std::vector<BoundaryPatch> &get_patches ();
 
     PointIterator get_point (unsigned int index);
     CellIterator  get_cell (unsigned int index);
@@ -42,9 +42,9 @@ class UnstructuredMesh
     friend UnstructuredMeshParser;
 
   private:
-    PointList                point_list;
-    CellList                 cell_list;
-    FaceList                 face_list;
+    PointList                  point_list;
+    CellList                   cell_list;
+    FaceList                   face_list;
     std::vector<BoundaryPatch> boundaries;
 };
 
@@ -54,41 +54,60 @@ class UnstructuredMesh
 //     Implementations
 // ==========================
 
-namespace FVMCode {
+namespace FVMCode
+{
 
-inline unsigned int UnstructuredMesh::n_points() const { return point_list.size(); }
-inline unsigned int UnstructuredMesh::n_faces() const { return face_list.size(); }
-inline unsigned int UnstructuredMesh::n_cells() const { return cell_list.size(); }
-inline unsigned int UnstructuredMesh::n_boundary_patches() const { return boundaries.size(); }
+inline unsigned int UnstructuredMesh::n_points () const
+{
+    return point_list.size ();
+}
+inline unsigned int UnstructuredMesh::n_faces () const
+{
+    return face_list.size ();
+}
+inline unsigned int UnstructuredMesh::n_cells () const
+{
+    return cell_list.size ();
+}
+inline unsigned int UnstructuredMesh::n_boundary_patches () const
+{
+    return boundaries.size ();
+}
 
-inline UnstructuredMesh::CellList& UnstructuredMesh::cells() {
+inline UnstructuredMesh::CellList &UnstructuredMesh::cells ()
+{
     return cell_list;
 }
 
-inline UnstructuredMesh::FaceList& UnstructuredMesh::faces() {
+inline UnstructuredMesh::FaceList &UnstructuredMesh::faces ()
+{
     return face_list;
 }
 
-inline const std::vector<BoundaryPatch>& UnstructuredMesh::get_patches() {
+inline const std::vector<BoundaryPatch> &UnstructuredMesh::get_patches ()
+{
     return boundaries;
 }
 
-inline UnstructuredMesh::PointIterator UnstructuredMesh::get_point(unsigned int index)
+inline UnstructuredMesh::PointIterator
+UnstructuredMesh::get_point (unsigned int index)
 {
-    Assert(index < n_points(), "List index out of range");
-    return point_list.begin() + index;
+    Assert (index < n_points (), "List index out of range");
+    return point_list.begin () + index;
 }
 
-inline UnstructuredMesh::CellIterator UnstructuredMesh::get_cell(unsigned int index)
+inline UnstructuredMesh::CellIterator
+UnstructuredMesh::get_cell (unsigned int index)
 {
-    Assert(index < cell_list.size(), "List index out of range");
-    return cell_list.begin() + index;
+    Assert (index < cell_list.size (), "List index out of range");
+    return cell_list.begin () + index;
 }
 
-inline UnstructuredMesh::FaceIterator UnstructuredMesh::get_face(unsigned int index)
+inline UnstructuredMesh::FaceIterator
+UnstructuredMesh::get_face (unsigned int index)
 {
-    Assert(index < n_faces(), "List index out of range");
-    return face_list.begin() + index;
+    Assert (index < n_faces (), "List index out of range");
+    return face_list.begin () + index;
 }
 
 } // namespace FVMCode
