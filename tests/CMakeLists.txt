@@ -15,7 +15,7 @@ create_test_sourcelist(Tests
     )
 
 # Add test driver executable
-add_executable(test_driver ${Tests} ${sources})
+add_executable(test_driver EXCLUDE_FROM_ALL ${Tests} ${sources})
 
 target_link_libraries(test_driver FVMCode)
 
