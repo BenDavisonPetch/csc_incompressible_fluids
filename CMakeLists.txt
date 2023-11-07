@@ -26,3 +26,4 @@ IF(CMAKE_BUILD_TYPE MATCHES "Release")
 ENDIF()
 
 add_subdirectory(tests)
+add_subdirectory(scripts)
