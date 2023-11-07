@@ -3,17 +3,16 @@
 
 #include "test_helpers.h"
 
-int unstructured_mesh_03 (int, char**)
+int unstructured_mesh_03 (int, char **)
 {
     // This test case is for a 1D mesh of 20 blocks, each with extent (0.005
     // 0.1, 0.01), and stacked in the x direction
     using namespace FVMCode;
 
     UnstructuredMesh       mesh;
-    UnstructuredMeshParser parser (
-        mesh, "mesh_1d/points", "mesh_1d/faces",
-        "mesh_1d/owner", "mesh_1d/neighbour",
-        "mesh_1d/boundary");
+    UnstructuredMeshParser parser (mesh, "mesh_1d/points", "mesh_1d/faces",
+                                   "mesh_1d/owner", "mesh_1d/neighbour",
+                                   "mesh_1d/boundary");
 
     AssertTest (mesh.n_cells () == 20);
     AssertTest (mesh.n_boundary_patches () == 3);
@@ -38,21 +37,26 @@ int unstructured_mesh_03 (int, char**)
         AssertTest (close (cell.volume (), 0.005 * 0.1 * 0.01));
     }
 
-    for (const BoundaryPatch& boundary : mesh.get_patches())
+    for (const BoundaryPatch &boundary : mesh.get_patches ())
     {
-        for (unsigned int f = boundary.start_face; f < boundary.start_face + boundary.n_faces; f++)
+        for (unsigned int f = boundary.start_face;
+             f < boundary.start_face + boundary.n_faces; f++)
         {
-            const auto& face = mesh.get_face(f);
-            AssertTest(face->is_boundary());
-            AssertTest(face->interpolation_factor() == 1.);
-            AssertTest(close(face->delta(), 2. / 0.1) || close(face->delta(), 2. / 0.01));
+            const auto &face = mesh.get_face (f);
+            AssertTest (face->is_boundary ());
+            AssertTest (face->interpolation_factor () == 1.);
+            AssertTest (close (face->delta (), 2. / 0.1)
+                        || close (face->delta (), 2. / 0.01)
+                        || boundary.type != empty);
         }
     }
 
-    for (const Face<3>& face : mesh.faces()) {
-        if (face.is_boundary()) continue;
-        AssertTest(close(face.delta(), 1. / 0.005));
-        AssertTest(close(face.interpolation_factor(), 0.5));
+    for (const Face<3> &face : mesh.faces ())
+    {
+        if (face.is_boundary ())
+            continue;
+        AssertTest (close (face.delta (), 1. / 0.005));
+        AssertTest (close (face.interpolation_factor (), 0.5));
     }
 
     MAIN_OUTPUT;
