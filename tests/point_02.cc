@@ -6,7 +6,7 @@
 
 #include <FVMCode/point.h>
 
-void test ()
+int point_02 (int, char**)
 {
     using namespace FVMCode;
     
@@ -16,11 +16,7 @@ void test ()
     const Point<3, int> & p2ref = p2;
     Point<3, int> p3 = p1ref - p2ref;
     AssertTest(p3(0) == 3 && p3(1) == 3 && p3(2) == 3);
-}
 
-int main ()
-{
-    test ();
     MAIN_OUTPUT;
 
     return EXIT_SUCCESS;

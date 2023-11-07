@@ -7,7 +7,7 @@
 
 #include <FVMCode/geometry.h>
 
-void test()
+int geometry_02 (int, char**)
 {
     using namespace FVMCode;
 
@@ -20,11 +20,7 @@ void test()
         double volume = Geometry::tetrahedron_volume(points);
         AssertTest(close(volume, 1. / 6));
     }
-}
 
-int main()
-{
-    test();
     MAIN_OUTPUT;
 
     return EXIT_SUCCESS;

@@ -7,7 +7,7 @@
 
 #include <FVMCode/geometry.h>
 
-void test()
+int geometry_01 (int, char**)
 {
     using namespace FVMCode;
 
@@ -70,11 +70,7 @@ void test()
         AssertTest(close(area, 0.5 * n_sides * inner_length * inner_length * std::sin(angle)));
         AssertTest(close(centroid.distance(Point<3>(2,1,0)), 0));
     }
-}
 
-int main()
-{
-    test();
     MAIN_OUTPUT;
 
     return EXIT_SUCCESS;

@@ -6,7 +6,7 @@
 
 #include <FVMCode/point.h>
 
-void test ()
+int point_01 (int, char**)
 {
     using namespace FVMCode;
     {
@@ -89,11 +89,7 @@ void test ()
         const Point<3> result(12, 12, -12);
         AssertTest(close(result.distance(p5), 0));
     }
-}
 
-int main ()
-{
-    test ();
     MAIN_OUTPUT;
 
     return EXIT_SUCCESS;

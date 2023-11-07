@@ -3,7 +3,7 @@
 
 #include "test_helpers.h"
 
-void test ()
+int unstructured_mesh_03 (int, char**)
 {
     // This test case is for a 1D mesh of 20 blocks, each with extent (0.005
     // 0.1, 0.01), and stacked in the x direction
@@ -11,9 +11,9 @@ void test ()
 
     UnstructuredMesh       mesh;
     UnstructuredMeshParser parser (
-        mesh, "tests/mesh_1d/points", "tests/mesh_1d/faces",
-        "tests/mesh_1d/owner", "tests/mesh_1d/neighbour",
-        "tests/mesh_1d/boundary");
+        mesh, "mesh_1d/points", "mesh_1d/faces",
+        "mesh_1d/owner", "mesh_1d/neighbour",
+        "mesh_1d/boundary");
 
     AssertTest (mesh.n_cells () == 20);
     AssertTest (mesh.n_boundary_patches () == 3);
@@ -54,12 +54,6 @@ void test ()
         AssertTest(close(face.delta(), 1. / 0.005));
         AssertTest(close(face.interpolation_factor(), 0.5));
     }
-    AssertTest(false);
-}
-
-int main ()
-{
-    test ();
 
     MAIN_OUTPUT;
 

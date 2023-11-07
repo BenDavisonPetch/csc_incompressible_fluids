@@ -3,14 +3,14 @@
 
 #include "test_helpers.h"
 
-void test ()
+int unstructured_mesh_01 (int, char**)
 {
     using namespace FVMCode;
 
     UnstructuredMesh       mesh;
     UnstructuredMeshParser parser (
-        mesh, "tests/input01/point.txt", "tests/input01/face.txt",
-        "tests/input01/cell.txt", "tests/input01/boundary.txt");
+        mesh, "input01/point.txt", "input01/face.txt",
+        "input01/cell.txt", "input01/boundary.txt");
 
     AssertTest (mesh.n_points () == 8);
     AssertTest (mesh.n_faces () == 6);
@@ -49,11 +49,6 @@ void test ()
     AssertTest (close (
         mesh.get_cell (0)->center ().distance (Point<3> (0.25, 0.25, 0.25)),
         0));
-}
-
-int main ()
-{
-    test ();
 
     MAIN_OUTPUT;
 
