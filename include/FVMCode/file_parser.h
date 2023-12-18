@@ -29,6 +29,9 @@ class UnstructuredMeshParser
                             const std::string &neighbour_file,
                             const std::string &boundary_file);
 
+    // Reads mesh in OpenFoam format, assuming files are set up as in OpenFoam
+    UnstructuredMeshParser (UnstructuredMesh &mesh);
+
   private:
     std::ifstream skip_foam_header (const std::string &filename) const;
     void          parse_points (const std::string &points_file);

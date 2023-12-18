@@ -50,6 +50,19 @@ struct BoundaryPatch
     }
 };
 
+class BoundaryFieldEntry
+{
+  public:
+    std::string type;
+    double      value;
+
+    BoundaryFieldEntry (const std::string &type, const double value)
+        : type (type)
+        , value (value)
+    {
+    }
+};
+
 } // namespace FVMCode
 
 #endif

@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
+find_package(Eigen3 REQUIRED)
 
 project(FVMCode)
 
@@ -9,12 +10,15 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+SET(CXX_STANDARD 17)
+
 FILE(CREATE_LINK ${CMAKE_BINARY_DIR}/compile_commands.json ${CMAKE_SOURCE_DIR}/compile_commands.json SYMBOLIC)
 
-INCLUDE_DIRECTORIES(include)
+INCLUDE_DIRECTORIES(include ${EIGEN3_INCLUDE_DIR})
 SET(sources
     src/file_parser.cc
-    src/geometry.cc)
+    src/geometry.cc
+    src/output.cc)
 ADD_LIBRARY(FVMCode ${sources})
 
 SET(CMAKE_CXX_FLAGS "-O0 -Wall -Wextra")
