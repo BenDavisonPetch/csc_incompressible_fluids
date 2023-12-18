@@ -1,3 +1,13 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    arch        "LSB;label=32;scalar=64";
+    class       faceList;
+    location    "constant/polyMesh";
+    object      faces;
+}
+
 101
 (
 4(1 22 64 43)

@@ -1,0 +1,6 @@
+FoamFile
+{
+    stuff : hello
+    dictionary : {}
+
+content

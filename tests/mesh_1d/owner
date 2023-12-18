@@ -1,3 +1,14 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    arch        "LSB;label=32;scalar=64";
+    note        "nPoints:4444  nCells:2100  nFaces:8521  nInternalFaces:4079";
+    class       labelList;
+    location    "constant/polyMesh";
+    object      owner;
+}
+
 101
 (
 0
