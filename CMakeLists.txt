@@ -9,6 +9,8 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+FILE(CREATE_LINK ${CMAKE_BINARY_DIR}/compile_commands.json ${CMAKE_SOURCE_DIR}/compile_commands.json SYMBOLIC)
+
 INCLUDE_DIRECTORIES(include)
 SET(sources
     src/file_parser.cc
@@ -28,3 +30,4 @@ IF(CMAKE_BUILD_TYPE MATCHES "Release")
 ENDIF()
 
 add_subdirectory(tests)
+add_subdirectory(scripts)
