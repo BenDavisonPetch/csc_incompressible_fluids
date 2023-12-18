@@ -25,3 +25,18 @@ add_custom_command(
     COMMAND python3 ${CMAKE_SOURCE_DIR}/scripts/transient_laplacian/plot.py
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/scripts/transient_laplacian
     )
+
+# ============== Convection Diffusion ==============
+add_executable(convection_diffusion convection_diffusion/convection_diffusion.cc)
+target_link_libraries(convection_diffusion FVMCode)
+
+# Necessary files
+file(COPY convection_diffusion/constant DESTINATION ${CMAKE_BINARY_DIR}/scripts/convection_diffusion/)
+
+# Add run command
+set_property(TARGET convection_diffusion
+    PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/scripts/convection_diffusion)
+add_custom_target(run_convection_diffusion
+                  COMMAND convection_diffusion
+                  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/scripts/convection_diffusion
+                  )
