@@ -4,6 +4,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 create_test_sourcelist(Tests
     test_driver.cc
+    assert_test_01.cc
     point_01.cc
     point_02.cc
     test_helpers_01.cc
@@ -16,6 +17,8 @@ create_test_sourcelist(Tests
 
 # Add test driver executable
 add_executable(test_driver EXCLUDE_FROM_ALL ${Tests})
+set_target_properties(test_driver PROPERTIES
+                      COMPILE_DEFINITIONS DEBUG)
 
 target_link_libraries(test_driver FVMCode)
 
@@ -33,5 +36,13 @@ file(COPY input01 input02 mesh_1d DESTINATION ${CMAKE_BINARY_DIR}/tests)
 foreach (test ${TestsToRun})
     get_filename_component(TName ${test} NAME_WE)
     add_test(NAME ${TName} COMMAND test_driver ${TName})
-    set_tests_properties(${TName} PROPERTIES DEPENDS build_test_driver)
+    set_tests_properties(${TName} PROPERTIES
+                         DEPENDS build_test_driver
+                         )
+endforeach()
+
+set(TestsThatShouldFail assert_test_01)
+
+foreach(test ${TestsThatShouldFail})
+    set_tests_properties(${test} PROPERTIES WILL_FAIL true)
 endforeach()
