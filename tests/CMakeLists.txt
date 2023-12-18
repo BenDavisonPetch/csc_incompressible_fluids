@@ -15,7 +15,7 @@ create_test_sourcelist(Tests
     )
 
 # Add test driver executable
-add_executable(test_driver ${Tests} ${sources})
+add_executable(test_driver ${Tests})
 
 target_link_libraries(test_driver FVMCode)
 
@@ -24,7 +24,10 @@ set(TestsToRun ${Tests})
 remove(TestsToRun test_driver.cc)
 
 # Add a test to compile the test driver
-add_test(build_test_driver "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target test_driver)
+add_test(build_test_driver "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target test_driver -j)
+
+# copy over necessary input
+file(COPY input01 input02 mesh_1d DESTINATION ${CMAKE_BINARY_DIR}/tests)
 
 # Add a test for each test
 foreach (test ${TestsToRun})

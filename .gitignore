@@ -10,3 +10,5 @@ build
 CTestTestfile.cmake
 DartConfiguration.tcl
 Testing
+.vscode
+tests/test_driver.cc
