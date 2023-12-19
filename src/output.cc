@@ -98,7 +98,7 @@ void Outputter::write_scalar_field (
         outfile << "\t" << patch.name << std::endl << "\t{" << std::endl;
         outfile << "\t\ttype\t" << field.type << ";" << std::endl;
         if (field.type == "fixedValue")
-            outfile << "\t\tvalue\tuniform" << field.value << ";" << std::endl;
+            outfile << "\t\tvalue\tuniform " << field.value << ";" << std::endl;
         outfile << "\t}" << std::endl;
     }
     outfile << "}" << std::endl;
