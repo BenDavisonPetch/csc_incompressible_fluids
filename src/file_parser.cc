@@ -1,5 +1,6 @@
 #include <FVMCode/exceptions.h>
 #include <FVMCode/file_parser.h>
+#include <FVMCode/input.h>
 
 namespace FVMCode
 {
@@ -43,18 +44,15 @@ UnstructuredMeshParser::UnstructuredMeshParser (UnstructuredMesh &mesh)
 {
 }
 
-std::ifstream
-UnstructuredMeshParser::skip_foam_header (const std::string &filename) const
+void UnstructuredMeshParser::skip_foam_header (Input::comment_istream &file) const
 {
-    std::ifstream file (filename);
-    Assert (file.is_open (), "File is not open!");
     std::string instring;
     file >> instring;
     if (instring != "FoamFile")
     {
         // There is no header
-        file.close ();
-        return std::ifstream (filename);
+        file.reset();
+        return;
     }
 
     // There is a heading
@@ -79,12 +77,14 @@ UnstructuredMeshParser::skip_foam_header (const std::string &filename) const
     }
 
     // The filestream has now hit the end of the dictionary so we can return it
-    return file;
+    return;
 }
 
 void UnstructuredMeshParser::parse_points (const std::string &points_file)
 {
-    std::ifstream file = skip_foam_header (points_file);
+    Input::comment_istream file(points_file);
+    skip_foam_header(file);
+
     unsigned int  n_points;
     file >> n_points;
     Assert (n_points, "Must have at least one point");
@@ -108,7 +108,8 @@ void UnstructuredMeshParser::parse_points (const std::string &points_file)
 
 void UnstructuredMeshParser::parse_faces (const std::string &faces_file)
 {
-    std::ifstream file = skip_foam_header (faces_file);
+    Input::comment_istream file(faces_file);
+    skip_foam_header(file);
     unsigned int  n_faces;
     file >> n_faces;
     Assert (n_faces, "Must have at least one face");
@@ -149,7 +150,9 @@ void UnstructuredMeshParser::parse_faces (const std::string &faces_file)
 
 void UnstructuredMeshParser::parse_cells (const std::string &cells_file)
 {
-    std::ifstream file = skip_foam_header (cells_file);
+    Input::comment_istream file(cells_file);
+    skip_foam_header(file);
+
     unsigned int  n_cells;
     file >> n_cells;
     Assert (n_cells, "Must have at least one cell");
@@ -200,7 +203,9 @@ void UnstructuredMeshParser::parse_cells (const std::string &cells_file)
 void UnstructuredMeshParser::parse_boundaries_legacy (
     const std::string &boundary_file)
 {
-    std::ifstream file = skip_foam_header (boundary_file);
+    Input::comment_istream file(boundary_file);
+    skip_foam_header(file);
+    
     unsigned int  n_boundary_types;
     file >> n_boundary_types;
     Assert (n_boundary_types, "Must have at least one boundary type");
@@ -269,7 +274,8 @@ void UnstructuredMeshParser::parse_owner_neighbour_list (
 void UnstructuredMeshParser::_add_cells_to_faces_neighbours (
     const std::string &label_list_file)
 {
-    std::ifstream file = skip_foam_header (label_list_file);
+    Input::comment_istream file(label_list_file);
+    skip_foam_header(file);
 
     unsigned int n_entries;
     file >> n_entries;
@@ -294,7 +300,9 @@ void UnstructuredMeshParser::_add_cells_to_faces_neighbours (
 void UnstructuredMeshParser::parse_boundaries_foam (
     const std::string &boundary_file)
 {
-    std::ifstream file = skip_foam_header (boundary_file);
+    Input::comment_istream file(boundary_file);
+    skip_foam_header(file);
+
     unsigned int  n_patches;
     file >> n_patches;
 
@@ -318,8 +326,9 @@ void UnstructuredMeshParser::parse_boundaries_foam (
         std::string  type;
         unsigned int n_faces;
         unsigned int start_face;
-        while (file >> field)
+        while (file.peek() != EOF)
         {
+            file >> field;
             if (field == "}")
                 break;
             if (field == "type")

@@ -19,7 +19,8 @@ INCLUDE_DIRECTORIES(include ${EIGEN3_INCLUDE_DIR})
 SET(sources
     src/file_parser.cc
     src/geometry.cc
-    src/output.cc)
+    src/output.cc
+    src/input.cc)
 ADD_LIBRARY(FVMCode ${sources})
 
 SET(CMAKE_CXX_FLAGS "-O0 -Wall -Wextra")

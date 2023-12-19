@@ -1,6 +1,7 @@
 #ifndef TEST_HELPERS_H
 #define TEST_HELPERS_H
 
+#include <FVMCode/exceptions.h>
 #include <iostream>
 
 #define AssertTest(cond) Assert(cond, "Test failed");

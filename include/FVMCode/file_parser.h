@@ -4,6 +4,8 @@
 #include <fstream>
 #include <map>
 
+#include <FVMCode/input.h>
+
 #include "exceptions.h"
 #include "point.h"
 #include "unstructured_mesh.h"
@@ -33,14 +35,14 @@ class UnstructuredMeshParser
     UnstructuredMeshParser (UnstructuredMesh &mesh);
 
   private:
-    std::ifstream skip_foam_header (const std::string &filename) const;
-    void          parse_points (const std::string &points_file);
-    void          parse_faces (const std::string &faces_file);
-    void          parse_cells (const std::string &cells_file);
-    void          parse_boundaries_legacy (const std::string &boundary_file);
-    void          parse_owner_neighbour_list (const std::string &owner_file,
-                                              const std::string &neighbour_file);
-    void          parse_boundaries_foam (const std::string &boundary_file);
+    void skip_foam_header (Input::comment_istream &file) const;
+    void parse_points (const std::string &points_file);
+    void parse_faces (const std::string &faces_file);
+    void parse_cells (const std::string &cells_file);
+    void parse_boundaries_legacy (const std::string &boundary_file);
+    void parse_owner_neighbour_list (const std::string &owner_file,
+                                     const std::string &neighbour_file);
+    void parse_boundaries_foam (const std::string &boundary_file);
     void _add_cells_to_faces_neighbours (const std::string &label_list_file);
 
     // Ensures normal vectors are pointing in the right direction relative to
