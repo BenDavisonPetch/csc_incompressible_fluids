@@ -23,7 +23,7 @@ SET(sources
     src/input.cc)
 ADD_LIBRARY(FVMCode ${sources})
 
-SET(CMAKE_CXX_FLAGS "-O0 -Wall -Wextra")
+SET(CMAKE_CXX_FLAGS "-Wall -Wextra")
 SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -Wall -Wextra -DDEBUG")
 SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -funroll-loops -funroll-all-loops -fstrict-aliasing")
 
