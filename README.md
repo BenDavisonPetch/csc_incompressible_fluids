@@ -1,5 +1,7 @@
 # Building and testing
 ```console
-$ cmake .
+$ mkdir build
+$ cd build
+$ cmake ..
 $ make test
 ```
