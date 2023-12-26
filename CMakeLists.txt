@@ -20,7 +20,8 @@ SET(sources
     src/file_parser.cc
     src/geometry.cc
     src/output.cc
-    src/input.cc)
+    src/input.cc
+    src/unstructured_mesh.cc)
 ADD_LIBRARY(FVMCode ${sources})
 
 SET(CMAKE_CXX_FLAGS "-Wall -Wextra")

@@ -13,6 +13,7 @@ create_test_sourcelist(Tests
     unstructured_mesh_01.cc
     unstructured_mesh_02.cc
     unstructured_mesh_03.cc
+    unstructured_mesh_04.cc
     skip_foam_header_01.cc
     comment_skipping_01.cc
     )
@@ -32,7 +33,7 @@ remove(TestsToRun test_driver.cc)
 add_test(build_test_driver "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target test_driver -j)
 
 # copy over necessary input
-file(COPY input01 input02 mesh_1d skip_foam_header_01 comment_skipping_01 DESTINATION ${CMAKE_BINARY_DIR}/tests)
+file(COPY input01 input02 mesh_1d skip_foam_header_01 unstructured_mesh_04 comment_skipping_01 DESTINATION ${CMAKE_BINARY_DIR}/tests)
 
 # Add a test for each test
 foreach (test ${TestsToRun})

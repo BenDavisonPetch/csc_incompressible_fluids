@@ -39,6 +39,8 @@ class UnstructuredMesh
     CellIterator  get_cell (unsigned int index);
     FaceIterator  get_face (unsigned int index);
 
+    unsigned int get_cell_containing_point (const Point<3> &point);
+
     friend UnstructuredMeshParser;
 
   private:
