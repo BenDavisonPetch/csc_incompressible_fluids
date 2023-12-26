@@ -1,4 +1,6 @@
+#include <FVMCode/exceptions.h>
 #include <FVMCode/file_parser.h>
+#include <FVMCode/input.h>
 
 namespace FVMCode
 {
@@ -34,9 +36,55 @@ UnstructuredMeshParser::UnstructuredMeshParser (
     compute_distance_ratios ();
 }
 
+UnstructuredMeshParser::UnstructuredMeshParser (UnstructuredMesh &mesh)
+    : UnstructuredMeshParser (
+        mesh, "constant/polyMesh/points", "constant/polyMesh/faces",
+        "constant/polyMesh/owner", "constant/polyMesh/neighbour",
+        "constant/polyMesh/boundary")
+{
+}
+
+void UnstructuredMeshParser::skip_foam_header (Input::comment_istream &file) const
+{
+    std::string instring;
+    file >> instring;
+    if (instring != "FoamFile")
+    {
+        // There is no header
+        file.reset();
+        return;
+    }
+
+    // There is a heading
+    // We run through the file until we close out the FoamFile dictionary
+    char inchar;
+    file >> inchar;
+    Assert (inchar == '{', "Input file is malformed!");
+    unsigned int num_open_brackets = 1;
+    while (num_open_brackets > 0)
+    {
+        if (file.peek () == EOF)
+        {
+            Assert (false, "End of file has been reached before FoamFile "
+                           "dictionary has closed!");
+            break;
+        }
+        file >> inchar;
+        if (inchar == '{')
+            num_open_brackets++;
+        else if (inchar == '}')
+            num_open_brackets--;
+    }
+
+    // The filestream has now hit the end of the dictionary so we can return it
+    return;
+}
+
 void UnstructuredMeshParser::parse_points (const std::string &points_file)
 {
-    std::ifstream file (points_file);
+    Input::comment_istream file(points_file);
+    skip_foam_header(file);
+
     unsigned int  n_points;
     file >> n_points;
     Assert (n_points, "Must have at least one point");
@@ -60,7 +108,8 @@ void UnstructuredMeshParser::parse_points (const std::string &points_file)
 
 void UnstructuredMeshParser::parse_faces (const std::string &faces_file)
 {
-    std::ifstream file (faces_file);
+    Input::comment_istream file(faces_file);
+    skip_foam_header(file);
     unsigned int  n_faces;
     file >> n_faces;
     Assert (n_faces, "Must have at least one face");
@@ -101,7 +150,9 @@ void UnstructuredMeshParser::parse_faces (const std::string &faces_file)
 
 void UnstructuredMeshParser::parse_cells (const std::string &cells_file)
 {
-    std::ifstream file (cells_file);
+    Input::comment_istream file(cells_file);
+    skip_foam_header(file);
+
     unsigned int  n_cells;
     file >> n_cells;
     Assert (n_cells, "Must have at least one cell");
@@ -152,7 +203,9 @@ void UnstructuredMeshParser::parse_cells (const std::string &cells_file)
 void UnstructuredMeshParser::parse_boundaries_legacy (
     const std::string &boundary_file)
 {
-    std::ifstream file (boundary_file);
+    Input::comment_istream file(boundary_file);
+    skip_foam_header(file);
+    
     unsigned int  n_boundary_types;
     file >> n_boundary_types;
     Assert (n_boundary_types, "Must have at least one boundary type");
@@ -221,7 +274,8 @@ void UnstructuredMeshParser::parse_owner_neighbour_list (
 void UnstructuredMeshParser::_add_cells_to_faces_neighbours (
     const std::string &label_list_file)
 {
-    std::ifstream file (label_list_file);
+    Input::comment_istream file(label_list_file);
+    skip_foam_header(file);
 
     unsigned int n_entries;
     file >> n_entries;
@@ -246,7 +300,9 @@ void UnstructuredMeshParser::_add_cells_to_faces_neighbours (
 void UnstructuredMeshParser::parse_boundaries_foam (
     const std::string &boundary_file)
 {
-    std::ifstream file (boundary_file);
+    Input::comment_istream file(boundary_file);
+    skip_foam_header(file);
+
     unsigned int  n_patches;
     file >> n_patches;
 
@@ -270,8 +326,9 @@ void UnstructuredMeshParser::parse_boundaries_foam (
         std::string  type;
         unsigned int n_faces;
         unsigned int start_face;
-        while (file >> field)
+        while (file.peek() != EOF)
         {
+            file >> field;
             if (field == "}")
                 break;
             if (field == "type")
@@ -361,16 +418,29 @@ void UnstructuredMeshParser::determine_cell_neighbours ()
 
 void UnstructuredMeshParser::compute_distance_ratios ()
 {
-    for (Face<3> &face : mesh.faces()) {
-        if(face.is_boundary())
+    for (Face<3> &face : mesh.faces ())
+    {
+        if (face.is_boundary ())
         {
             face.interpolation_factor_ = 1.;
-            face.delta_ =  1. / face.center().distance(mesh.get_cell(face.neighbour_list[0])->center());
-        } else {
-            double cell_center_distance = mesh.get_cell(face.neighbour_list[0])->center().distance(mesh.get_cell(face.neighbour_list[1])->center());
-            double face_cell_distance = mesh.get_cell(face.neighbour_list[0])->center().distance(face.center());
+            face.delta_
+                = 1.
+                  / face.center ().distance (
+                      mesh.get_cell (face.neighbour_list[0])->center ());
+        }
+        else
+        {
+            double cell_center_distance
+                = mesh.get_cell (face.neighbour_list[0])
+                      ->center ()
+                      .distance (
+                          mesh.get_cell (face.neighbour_list[1])->center ());
+            double face_cell_distance = mesh.get_cell (face.neighbour_list[0])
+                                            ->center ()
+                                            .distance (face.center ());
             face.delta_ = 1. / cell_center_distance;
-            face.interpolation_factor_ = face_cell_distance / cell_center_distance;
+            face.interpolation_factor_
+                = face_cell_distance / cell_center_distance;
         }
     }
 }

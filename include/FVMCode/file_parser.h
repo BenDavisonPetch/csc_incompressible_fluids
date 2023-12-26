@@ -4,6 +4,9 @@
 #include <fstream>
 #include <map>
 
+#include <FVMCode/input.h>
+
+#include "exceptions.h"
 #include "point.h"
 #include "unstructured_mesh.h"
 
@@ -28,7 +31,11 @@ class UnstructuredMeshParser
                             const std::string &neighbour_file,
                             const std::string &boundary_file);
 
+    // Reads mesh in OpenFoam format, assuming files are set up as in OpenFoam
+    UnstructuredMeshParser (UnstructuredMesh &mesh);
+
   private:
+    void skip_foam_header (Input::comment_istream &file) const;
     void parse_points (const std::string &points_file);
     void parse_faces (const std::string &faces_file);
     void parse_cells (const std::string &cells_file);

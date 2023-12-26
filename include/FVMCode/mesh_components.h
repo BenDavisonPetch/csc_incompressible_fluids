@@ -108,6 +108,8 @@ template <int dim, int spacedim> class Cell
     double                 volume () const { return volume_; }
     const Point<spacedim> &center () const { return centroid; }
 
+    bool point_inside (const Point<spacedim> &point) const;
+
     friend UnstructuredMeshParser;
 
   private:
@@ -324,6 +326,20 @@ void Cell<dim, spacedim>::compute_volume_and_centroid ()
     {
         Assert (false, "Not implemented");
     }
+}
+
+template <int dim, int spacedim>
+bool Cell<dim, spacedim>::point_inside (const Point<spacedim> &point) const
+{
+    for (const auto &face : face_list)
+    {
+        int adjustment_factor
+            = (face->normal ().dot (face->center () - center ()) > 0) ? 1 : -1;
+        if (face->normal ().dot (face->center () - point) * adjustment_factor
+            < 0)
+            return false;
+    }
+    return true;
 }
 
 } // namespace FVMCode

@@ -5,40 +5,40 @@
 |   \\  /    A nd           | Website:  www.openfoam.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
-
 FoamFile
 {
     version     2.0;
     format      ascii;
     arch        "LSB;label=32;scalar=64";
-    note        "nPoints:4444  nCells:2100  nFaces:8521  nInternalFaces:4079";
-    class       labelList;
+    class       polyBoundaryMesh;
     location    "constant/polyMesh";
-    object      neighbour;
+    object      boundary;
 }
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-19
-(
-1
-2
 3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
+(
+    leftWall
+    {
+        type            wall;
+        inGroups        1(wall);
+        nFaces          2;
+        startFace       4;
+    }
+    otherWalls
+    {
+        type            wall;
+        inGroups        1(wall);
+        nFaces          6;
+        startFace       6;
+    }
+    frontAndBack
+    {
+        type            empty;
+        inGroups        1(empty);
+        nFaces          8;
+        startFace       12;
+    }
 )
-
 
 // ************************************************************************* //
