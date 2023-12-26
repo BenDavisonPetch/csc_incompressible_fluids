@@ -75,7 +75,7 @@ void Outputter::write_scalar_field (
     const VectorXd &scalar_field, std::string name,
     const BoundaryConditions &boundary_conditions)
 {
-    Assert (name, "Field must have a name!");
+    Assert (name != "", "Field must have a name!");
 
     auto time_dir = std::filesystem::path (dir_name);
 
@@ -93,12 +93,13 @@ void Outputter::write_scalar_field (
 
     // Boundary field
     outfile << "boundaryField" << std::endl << "{" << std::endl;
-    for (auto& [patch, field] : boundary_conditions)
+    for (auto &[patch, field] : boundary_conditions)
     {
         outfile << "\t" << patch.name << std::endl << "\t{" << std::endl;
         outfile << "\t\ttype\t" << field.type << ";" << std::endl;
         if (field.type == "fixedValue")
-            outfile << "\t\tvalue\tuniform " << field.value << ";" << std::endl;
+            outfile << "\t\tvalue\tuniform " << field.value << ";"
+                    << std::endl;
         outfile << "\t}" << std::endl;
     }
     outfile << "}" << std::endl;
