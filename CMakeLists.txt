@@ -21,7 +21,9 @@ SET(sources
     src/geometry.cc
     src/output.cc
     src/input.cc
-    src/unstructured_mesh.cc)
+    src/unstructured_mesh.cc
+    src/sparsity/sparsity_pattern.cc
+    src/sparsity/sparse_matrix.cc)
 ADD_LIBRARY(FVMCode ${sources})
 
 SET(CMAKE_CXX_FLAGS "-Wall -Wextra")

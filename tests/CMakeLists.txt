@@ -16,6 +16,7 @@ create_test_sourcelist(Tests
     unstructured_mesh_04.cc
     skip_foam_header_01.cc
     comment_skipping_01.cc
+    sparsity_01.cc
     )
 
 # Add test driver executable
